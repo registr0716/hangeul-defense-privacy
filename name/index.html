@@ -1,0 +1,784 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>내 이름은 어떤 장수? · 한글 삼국지 디펜스</title>
+<meta name="description" content="이름 글자로 삼국지 장수를 세워 보세요. 한글 두 글자로 장수를 세우는 디펜스 게임, 한글 삼국지 디펜스.">
+<meta property="og:title" content="내 이름은 어떤 장수?">
+<meta property="og:description" content="이름 글자로 삼국지 장수를 세워 보세요 — 한글 삼국지 디펜스">
+<meta property="og:image" content="https://registr0716.github.io/hangeul-defense-privacy/name/og.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Nanum+Myeongjo:wght@400;800&display=swap">
+<style>
+  :root { --paper: #F2E9CE; --ink: #2A241B; --red: #B8392F; --gold: #D9B04A; --gold-hi: #FFD34A; --dim: #6E6555; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #1A1610; color: var(--ink); font-family: 'Nanum Myeongjo', serif; word-break: keep-all; }
+  main { max-width: 480px; margin: 0 auto; padding: 28px 16px 48px; }
+  .top { text-align: center; color: #F0E6C8; }
+  .top small { display: block; font-size: 13px; letter-spacing: 3px; color: var(--gold); }
+  h1 { margin: 6px 0 4px; font-family: 'Song Myung', serif; font-weight: 400; font-size: clamp(34px, 9vw, 44px); color: var(--gold-hi); }
+  .top p { margin: 0; color: #C9BE9B; font-size: 15px; }
+  form { display: flex; gap: 8px; margin: 22px 0 14px; }
+  input { flex: 1; min-width: 0; height: 56px; padding: 0 14px; font-size: 22px; font-family: 'Song Myung', serif; background: var(--paper); border: 3px solid var(--gold); color: var(--ink); }
+  button, .btn { display: inline-flex; align-items: center; justify-content: center; height: 56px; padding: 0 18px; border: 3px solid #0D0B08; background: var(--red); color: #fff; font-family: 'Nanum Myeongjo', serif; font-weight: 800; font-size: 18px; box-shadow: 4px 4px 0 #0D0B08; cursor: pointer; text-decoration: none; }
+  button:active, .btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #0D0B08; }
+  .card { background: var(--paper); border: 6px solid var(--ink); outline: 3px solid var(--gold); outline-offset: -14px; padding: 26px 18px 22px; text-align: center; box-shadow: 0 16px 40px rgba(0,0,0,.5); }
+  .card[hidden] { display: none; }
+  .who { font-size: 16px; color: var(--dim); }
+  .row { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 14px 0 6px; flex-wrap: wrap; }
+  .t { width: 52px; height: 52px; display: grid; place-items: center; background: #FBF3D8; border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-family: 'Song Myung', serif; font-size: 30px; }
+  .t.hit { background: var(--gold-hi); }
+  .arrow { font-size: 24px; color: var(--red); margin: 0 4px; }
+  canvas.p { width: 200px; height: 240px; image-rendering: pixelated; background: #14110C; border: 6px solid var(--gold); margin: 10px auto 4px; display: block; }
+  .name { font-family: 'Song Myung', serif; font-size: 44px; margin: 8px 0 0; }
+  .ja { font-size: 15px; color: var(--dim); }
+  .sk { margin: 12px 0 0; font-size: 18px; font-weight: 800; color: var(--red); }
+  .sk span { display: block; font-weight: 400; font-size: 14px; color: var(--dim); margin-top: 2px; }
+  .q { margin: 10px 0 0; font-size: 17px; }
+  .why { margin: 12px 0 0; font-size: 13.5px; color: var(--dim); line-height: 1.6; }
+  .acts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 18px 0 0; }
+  .acts .alt { background: var(--paper); color: var(--ink); }
+  .cta { display: block; margin: 22px 0 0; padding: 16px; background: #2E271D; border: 2px solid var(--gold); color: #F0E6C8; text-align: center; }
+  .cta b { display: block; font-family: 'Song Myung', serif; font-weight: 400; font-size: 24px; color: var(--gold-hi); }
+  .cta span { display: block; margin: 4px 0 12px; font-size: 14px; color: #C9BE9B; }
+  .cta .btn { width: 100%; }
+  footer { margin-top: 22px; text-align: center; font-size: 12px; color: #8A8070; }
+  footer a { color: #C9BE9B; }
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 10px 16px; border: 2px solid var(--gold); opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .toast.on { opacity: 1; }
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><small>한글 삼국지 디펜스</small><h1>내 이름은 어떤 장수?</h1><p>이름을 넣으면 그 글자로 삼국지 장수를 세웁니다</p></div>
+  <form id="f"><input id="n" maxlength="6" placeholder="이름 (예: 관우진)" autocomplete="off" aria-label="이름"><button>출정</button></form>
+  <section class="card" id="card" hidden>
+    <div class="who" id="who"></div>
+    <div class="row" id="row"></div>
+    <canvas class="p" id="pc" width="40" height="48"></canvas>
+    <div class="name" id="gn"></div><div class="ja" id="gj"></div>
+    <div class="sk" id="sk"></div>
+    <div class="q" id="gq"></div>
+    <div class="why" id="why"></div>
+    <div class="acts"><button id="share">결과 공유</button><button class="alt" id="copy">링크 복사</button></div>
+  </section>
+  <div class="cta"><b>게임에서 직접 세워 보기</b><span>「관」 옆에 「우」를 놓으면 관우가 온다 — 한글 두 글자로 장수를 세우는 디펜스 · 무료</span><a class="btn" id="store" href="https://play.google.com/store/apps/details?id=com.weconnectgames.hangeuldefense&referrer=utm_source%3Dnamepage%26utm_medium%3Dweb">Google Play에서 받기</a></div>
+  <footer>이름은 이 페이지에서만 쓰이고 어디에도 보내지 않습니다 · <a href="../">개인정보처리방침</a> · Welead Corporation</footer>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+const PORTRAITS = (() => {
+const W = 40, H = 48;
+
+/* ── 01. 고정 팔레트 — 색 수는 아래 정의가 곧 사실이다 ── */
+const PAL = {
+  '1':'#1A1410','2':'#2E241C',                                  // 외곽 2
+  '3':'#E8C39A','4':'#F5DDBC','5':'#B08560','6':'#8A5F3E',      // 피부 4
+  '7':'#C0594A','8':'#E08A72','9':'#8A3328',                    // 홍안 3
+  'a':'#14100C','b':'#3A2C20','c':'#5A4632',                    // 모발 흑 3
+  'd':'#C9C3B4','e':'#EFEAE0',                                  // 모발 백 2
+  'f':'#C8CDD4','g':'#EFF2F5','h':'#7A8288','i':'#4A5058',      // 철 4
+  'j':'#D9B04A','k':'#F0D98A','l':'#8A6A2A',                    // 금 3
+  'm':'#3E8E5A','n':'#5FB07C','o':'#256641',                    // 촉 3
+  'p':'#2F5FA8','q':'#5E8FD0','r':'#1C3E72',                    // 위 3
+  's':'#B8392F','t':'#D9695E','u':'#7A1F18',                    // 오 3
+  'v':'#6B4C8A','w':'#9878BE','x':'#452C60',                    // 군웅 3
+  'y':'#C9342A','z':'#F7F1DC'                                   // 적 · 백 2
+};
+const PAL_LABEL = {
+  '1':'외곽','2':'외곽명','3':'피부','4':'피부명','5':'피부암','6':'피부짙',
+  '7':'홍안','8':'홍안명','9':'홍안암','a':'흑발','b':'흑발명','c':'흑발밝',
+  'd':'백발','e':'백발명','f':'철','g':'철명','h':'철암','i':'철짙',
+  'j':'금','k':'금명','l':'금암','m':'촉','n':'촉명','o':'촉암',
+  'p':'위','q':'위명','r':'위암','s':'오','t':'오명','u':'오암',
+  'v':'군웅','w':'군웅명','x':'군웅암','y':'적','z':'백'
+};
+// 세력 자리표시자 F/G/H → 실제 3색
+const FACTION = { '촉':['m','n','o'], '위':['p','q','r'], '오':['s','t','u'], '군':['v','w','x'] };
+
+/* ── 그리드 유틸 ─────────────────────────────── */
+const grid = (w, h, fill) => Array.from({length:h}, () => Array(w).fill(fill));
+function stamp(g, art, ox, oy, remap) {
+  art.forEach((row, y) => {
+    [...row].forEach((ch, x) => {
+      if (ch === '.') return;
+      const c = remap && remap[ch] ? remap[ch] : ch;
+      const gy = y + oy, gx = x + ox;
+      if (gy >= 0 && gy < g.length && gx >= 0 && gx < g[0].length) g[gy][gx] = c;
+    });
+  });
+}
+function paint(cv, g) {
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  g.forEach((row, y) => row.forEach((ch, x) => {
+    const col = PAL[ch];
+    if (!col) return;
+    ctx.fillStyle = col; ctx.fillRect(x, y, 1, 1);
+  }));
+}
+
+/* ── 레이아웃 규약 (40 × 48) ────────────────────
+   y 2–11  투구 · 관        y 7–31  얼굴 (중심 19)
+   y 18–21 눈               y 25–33 수염
+   y 29–34 목               y 33–47 어깨 · 갑주
+   ───────────────────────────────────────────── */
+const FACE_CX = 20, FACE_CY = 19;
+const NECK_TOP = 29, ARMOR_TOP = 33;
+
+const SKIN = {
+  normal: { base:'3', hi:'4', sh:'5', deep:'6' },
+  pale:   { base:'4', hi:'z', sh:'3', deep:'5' },   // 문관 · 병약
+  tan:    { base:'5', hi:'3', sh:'6', deep:'1' },   // 야전 · 볕에 그을림
+  dark:   { base:'6', hi:'5', sh:'1', deep:'1' },   // 서량 · 이민족
+  red:    { base:'7', hi:'8', sh:'9', deep:'1' }    // 관우 전용 홍안
+};
+
+/* ── 02. 얼굴 베이스 제너레이터 ──────────────── */
+function faceBase(o) {
+  const g = grid(W, H, '.');
+  const S = SKIN[o.skin] || SKIN.normal;
+  const rw = o.w, rh = o.h;
+  const jaw = o.jaw / 10;
+
+  const inside = (x, y) => {
+    let w = rw;
+    if (y > FACE_CY) w = rw * (1 - jaw * ((y - FACE_CY) / rh) * 0.8);
+    const dx = (x - FACE_CX) / w, dy = (y - FACE_CY) / rh;
+    return dx * dx + dy * dy <= 1;
+  };
+
+  // 목 (얼굴보다 먼저 — 얼굴이 위에 덮는다)
+  for (let y = NECK_TOP; y < ARMOR_TOP + 1; y++)
+    for (let x = FACE_CX - 4; x <= FACE_CX + 4; x++) {
+      const edge = (x === FACE_CX - 4 || x === FACE_CX + 4);
+      g[y][x] = edge ? '1' : (x < FACE_CX ? S.base : S.sh);
+    }
+
+  // 얼굴
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    if (!inside(x, y)) continue;
+    const dx = (x - FACE_CX) / rw, dy = (y - FACE_CY) / rh;
+    const d = Math.sqrt(dx * dx + dy * dy);
+    const lit = (-dx - dy) / 2;
+    let c = S.base;
+    if (d > 0.80) c = S.sh;
+    else if (lit > 0.32) c = S.hi;
+    if (d > 0.80 && lit < -0.25) c = S.deep;
+    g[y][x] = c;
+  }
+  // 외곽선
+  const out = g.map(r => r.slice());
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    if (g[y][x] !== '.') continue;
+    const near = [[0,1],[0,-1],[1,0],[-1,0]].some(([dy,dx]) => {
+      const yy = y + dy, xx = x + dx;
+      return yy >= 0 && yy < H && xx >= 0 && xx < W && g[yy][xx] !== '.';
+    });
+    if (near) out[y][x] = '1';
+  }
+  // ── 이목구비 ──────────────────────────────
+  const earOff = Math.round(rw - 9);
+  stamp(out, EARS[o.ear || 'normal'], FACE_CX - 10 - earOff, FACE_CY - 2);
+  stamp(out, NOSE[o.nose || 'straight'], FACE_CX - 2, FACE_CY + 2);
+  stamp(out, BROW[o.brow || 'thin'], FACE_CX - 6, FACE_CY - 4);
+  stamp(out, MOUTH[o.mouth || 'neutral'], FACE_CX - 4, FACE_CY + Math.round(rh * 0.62));
+  if (o.age === 'old') stamp(out, WRINKLE, FACE_CX - 9, FACE_CY + Math.round(rh * 0.30));
+  if (o.age === 'young') {                       // 젊은 얼굴 — 볼 하이라이트
+    for (const dx of [-6, 6]) {
+      const x = FACE_CX + dx, y = FACE_CY + 3;
+      if (out[y] && out[y][x] && out[y][x] !== '.' && out[y][x] !== '1') out[y][x] = S.hi;
+    }
+  }
+  return out;
+}
+
+/* ── 갑주 제너레이터 — 사다리꼴 + 종류별 문양 ── */
+function stampArmor(g, kind, remap, tr) {
+  tr = tr || TRIM.gold;
+  const bot = H - 1;
+  for (let y = ARMOR_TOP; y <= bot; y++) {
+    const t = (y - ARMOR_TOP) / (bot - ARMOR_TOP);
+    const half = Math.round(6 + t * 13);
+    for (let x = FACE_CX - half; x <= FACE_CX + half; x++) {
+      if (x < 0 || x >= W) continue;
+      g[y][x] = (x === FACE_CX - half || x === FACE_CX + half) ? '1' : 'F';
+    }
+  }
+  const put = (y, x, c) => { if (y >= 0 && y < H && x >= 0 && x < W && g[y][x] !== '.') g[y][x] = c; };
+
+  if (kind === 'pangap') {                      // 판갑 — 금속 견갑 + 가슴 금장
+    for (let y = ARMOR_TOP; y < ARMOR_TOP + 3; y++)
+      for (let x = 0; x < W; x++) if (g[y][x] === 'F') put(y, x, y === ARMOR_TOP ? 'g' : 'f');
+    for (let y = ARMOR_TOP + 4; y < ARMOR_TOP + 8; y++) { put(y, 5, 'f'); put(y, 6, 'f'); put(y, W-6, 'f'); put(y, W-7, 'f'); }
+    for (let x = 17; x <= 22; x++) { put(ARMOR_TOP + 6, x, tr.m); put(ARMOR_TOP + 7, x, tr.d); }
+  } else if (kind === 'chalgap') {              // 찰갑 — 가로 미늘
+    for (let y = ARMOR_TOP + 1; y < H; y += 2)
+      for (let x = 0; x < W; x++) if (g[y][x] === 'F') put(y, x, x % 2 ? 'h' : 'i');
+  } else if (kind === 'dopo') {                 // 도포 — 여밈 + 금대
+    for (let y = ARMOR_TOP; y < H; y++) { put(y, FACE_CX - 1, 'G'); put(y, FACE_CX, 'H'); }
+    for (let x = 8; x < W - 8; x++) { put(ARMOR_TOP + 9, x, tr.m); put(ARMOR_TOP + 10, x, tr.d); }
+  } else if (kind === 'yungbok') {              // 융복 — 가죽 테두리
+    for (let y = ARMOR_TOP; y < H; y++)
+      for (let x = 0; x < W; x++) if (g[y][x] === '1') put(y, x, 'c');
+    for (let y = ARMOR_TOP + 3; y < ARMOR_TOP + 6; y++) { put(y, 12, 'H'); put(y, 13, 'H'); put(y, W-13, 'H'); put(y, W-14, 'H'); }
+  }
+  // 칼라 (목 감싸기)
+  for (let x = FACE_CX - 6; x <= FACE_CX + 6; x++) put(ARMOR_TOP, x, x % 4 === 0 ? tr.h : 'G');
+  // 세력색 치환
+  for (let y = ARMOR_TOP; y < H; y++) for (let x = 0; x < W; x++)
+    if (remap[g[y][x]]) g[y][x] = remap[g[y][x]];
+}
+const ARMOR = {
+  pangap:  { n:'판갑' }, chalgap: { n:'찰갑' },
+  dopo:    { n:'도포' }, yungbok: { n:'융복' }
+};
+
+/* ── 얼굴 이목구비 — 베이스 위에 얹는 작은 파츠 ── */
+// 코 · 폭 5 · 얼굴 중앙
+const NOSE = {
+  straight: ['..4..', '..4..', '.454.', '16561'],
+  hooked:   ['..4..', '..44.', '.4554', '16561'],
+  broad:    ['.....', '.444.', '45554', '16661']
+};
+// 귀 · 폭 20 · 얼굴 좌우 끝
+const EARS = {
+  normal: ['5..................5',
+           '35................53',
+           '35................53',
+           '.5................5.'],
+  big:    ['5..................5',          // 유비 — 수견(垂肩)
+           '35................53',
+           '35................53',
+           '35................53',
+           '35................53',
+           '.5................5.']
+};
+// 눈썹 · 폭 13
+const BROW = {
+  thin:   ['.aaa.....aaa.'],
+  strong: ['aaaa.....aaaa'],
+  angry:  ['aaa.......aaa', '..aa.....aa..'],
+  arched: ['.aaaa...aaaa.'],
+  baekmi: ['dddd.....dddd', '.ee.......ee.'],   // 마량 — 백미(白眉)
+  bushy:  ['aaaa.....aaaa', 'aaa.......aaa']
+};
+// 입 · 폭 9
+const MOUTH = {
+  firm:    ['.6666666.'],
+  neutral: ['..66666..'],
+  grim:    ['.6.....6.', '..66666..']
+};
+// 주름 (노년) · 폭 18
+const WRINKLE = ['5................5',
+                 '.5..............5.',
+                 '..5............5..'];
+
+/* ── 03. 파츠 라이브러리 (손으로 그린 실루엣) ── */
+// 투구 · 관 — 26 폭, ox 7 / oy 2
+const HELM = {
+  none:   { n:'없음', ox:0, oy:0, art:[] },
+  muguan: { n:'무장관', ox:7, oy:5, art:[
+    '..........iiiiii..........',
+    '.......iiiffffffiii.......',
+    '.....iifffffffffffffii....',
+    '....iffffffffffffffffi....',
+    '...ijjjjjjjjjjjjjjjjjjl...',
+    '...ikkjjjjjjjjjjjjjjkkl...'] },
+  mungeon:{ n:'문관건', ox:7, oy:4, art:[
+    '........aaaaaaaaaa........',
+    '......aabbbbbbbbbbaa......',
+    '.....abbbbbbbbbbbbba......',
+    '....abbbbbbbbbbbbbbba.....',
+    '....aabbbbbbbbbbbbbbaa....',
+    '.....aaaaaaaaaaaaaaaa.....'] },
+  bongsi: { n:'봉시관', ox:7, oy:1, art:[
+    '............yy............',
+    '...........yyyy...........',
+    '.........iiffffii.........',
+    '.......iifffggfffii.......',
+    '.....iiffffffffffffii.....',
+    '....ijjjjjjjjjjjjjjjjl....',
+    '....ikkjjjjjjjjjjjjkkl....'] },
+  tugu:   { n:'전투구', ox:7, oy:4, art:[
+    '......hhiiiiiiiiiihh......',
+    '....hiiffffffffffffiih....',
+    '...hiffffgggggggffffih....',
+    '...hiffffffffffffffffih...',
+    '...hhiiiiiiiiiiiiiiiihh...',
+    '....jjjjjjjjjjjjjjjjjj....'] },
+  hwang:  { n:'황건', ox:7, oy:5, art:[
+    '......jjjjjjjjjjjjjj......',
+    '....jjkkjjjjjjjjjjkkjj....',
+    '....jjjjjjjjjjjjjjjjjj....',
+    '.....ljjjjjjjjjjjjjjl.....',
+    '......llllllllllllll......'] },
+  samcha: { n:'삼차관', ox:7, oy:0, art:[
+    '........y........y........',
+    '........y........y........',
+    '.......yy........yy.......',
+    '.....f......ff......f.....',
+    '....fff....ffff....fff....',
+    '...iffffffffffffffffffi...',
+    '...ijjjjjjjjjjjjjjjjjjl...',
+    '...ikkjjjjjjjjjjjjjjkkl...'] },
+  yungeon:{ n:'윤건', ox:7, oy:1, art:[
+    '.......aaaaaaaaaaaa.......',
+    '.....aabbbbbbbbbbbbaa.....',
+    '....abbbbbbbbbbbbbbbba....',
+    '...abbbbbbbbbbbbbbbbbba...',
+    '...aabbbbbbbbbbbbbbbbaa...',
+    '....aaaaaaaaaaaaaaaaaa....',
+    '......aa..........aa......'] },
+  myeonryu:{n:'면류관', ox:7, oy:2, art:[
+    '..1111111111111111111111..',
+    '..1jjjjjjjjjjjjjjjjjjjj1..',
+    '...1kkkkkkkkkkkkkkkkkk1...',
+    '....j.j.j.j.j.j.j.j.j.....',
+    '.....aaaaaaaaaaaaaaaa.....'] },
+  jeonlip:{ n:'전립', ox:7, oy:4, art:[
+    '.........iiiiiiii.........',
+    '.......iiccccccccii.......',
+    '.....iiccccccccccccii.....',
+    '.1cccccccccccccccccccccc1.',
+    '..1111111111111111111111..'] },
+  sangtu: { n:'상투', ox:7, oy:3, art:[
+    '............aa............',
+    '...........aaaa...........',
+    '...........ajja...........',
+    '.........aaaaaaaa.........',
+    '.......aaaaaaaaaaaa.......',
+    '......aaaaaaaaaaaaaa......'] },
+  dugeon: { n:'두건', ox:7, oy:6, art:[
+    '......cccccccccccccc......',
+    '....cccccccccccccccccc....',
+    '....cc..............cc....'] },
+  myeongap:{n:'면갑투구', ox:7, oy:4, art:[
+    '......hhiiiiiiiiiihh......',
+    '....hiiffffffffffffiih....',
+    '...hiffffgggggggffffih....',
+    '...hiffffffffffffffffih...',
+    '...hhiiiiiiffiiiiiiiihh...',
+    '....f.......ff.......f....',
+    '....f.......ff.......f....',
+    '....1.......11.......1....'] },
+  imin:   { n:'이민족', ox:7, oy:2, art:[
+    '....c................c....',
+    '....cc..............cc....',
+    '.....ccaaaaaaaaaaaacc.....',
+    '....ccaabbbbbbbbbbaacc....',
+    '.....caabbbbbbbbbbaac.....',
+    '......aaabbbbbbbbaaa......',
+    '.......aaaaaaaaaaaa.......'] }
+};
+// 수염 — 20 폭, ox 10 / oy 25
+const BEARD = {
+  none:  { n:'없음', ox:0, oy:0, art:[] },
+  paja:  { n:'팔자', ox:11, oy:24, art:[
+    'aa............aa',
+    '.aab........baa.',
+    '..aa........aa..'] },
+  jang:  { n:'장수염', ox:11, oy:24, art:[
+    'aa............aa',
+    '.aab........baa.',
+    '..aaaaabbaaaaa..',
+    '...aaaabbaaaa...',
+    '...aaaaaaaaaa...',
+    '....aaaaaaaa....',
+    '....aaabbaaa....',
+    '.....aaaaaa.....',
+    '.....aaaaaa.....',
+    '......aaaa......',
+    '......aaaa......',
+    '.......aa.......'] },
+  bbut:  { n:'뻣뻣', ox:11, oy:24, art:[
+    'a.a..........a.a',
+    '.aaab......baaa.',
+    'a.aaaaaaaaaaaa.a',
+    '.a.aaaabbaaaa.a.',
+    'a...aaaaaaaa...a',
+    '.a...aaaaaa...a.'] },
+  jayeom:{ n:'자염', ox:11, oy:24, art:[
+    'vv............vv',
+    '.vvw........wvv.',
+    '..vvvvvwwvvvvv..',
+    '...vvvvwwvvvv...',
+    '...vvvvvvvvvv...',
+    '....vvvvvvvv....',
+    '.....vvvvvv.....',
+    '......vvvv......'] },
+  jjalb: { n:'단수염', ox:11, oy:25, art:[
+    'aa............aa',
+    '.aab........baa.',
+    '..aaaaaaaaaaaa..',
+    '...aaaaaaaaaa...',
+    '....aaaaaaaa....'] },
+  yeomso:{ n:'염소', ox:11, oy:26, art:[
+    '......aaaa......',
+    '......abba......',
+    '.......aa.......',
+    '.......aa.......'] },
+  kot:   { n:'콧수염', ox:11, oy:24, art:[
+    '...aaaa..aaaa...',
+    '....aa....aa....'] },
+  gure:  { n:'구레나룻', ox:11, oy:22, art:[
+    'aaa..........aaa',
+    'aab..........baa',
+    'aa............aa',
+    '.a............a.'] },
+  samgak:{ n:'삼각', ox:11, oy:25, art:[
+    '..aa........aa..',
+    '...aaaaaaaaaa...',
+    '....aaaaaaaa....',
+    '.....aaaaaa.....',
+    '......aaaa......'] },
+  baek:  { n:'백수염', ox:11, oy:24, art:[
+    'dd............dd',
+    '.dde........edd.',
+    '..ddddeeeedddd..',
+    '...ddddeeddd....',
+    '...dddddddddd...',
+    '....dddddddd....',
+    '.....dddddd.....',
+    '......dddd......',
+    '.......dd.......'] }
+};
+// 눈 · 표정 — 11 폭, ox 15 / oy 18
+const EYE = {
+  normal: { n:'보통', ox:16, oy:18, art:['bb.....bb', 'aa.....aa'] },
+  sharp:  { n:'봉안', ox:16, oy:18, art:['bbb...bbb', '.aa...aa.', '..a...a..'] },
+  glare:  { n:'부릅', ox:16, oy:17, art:['bbb...bbb', 'aa.....aa', 'aa.....aa'] },
+  calm:   { n:'온화', ox:16, oy:19, art:['bb.....bb', '.aa...aa.'] },
+  byeok:  { n:'벽안', ox:16, oy:18, art:['bbb...bbb', 'aqa...aqa', '.a.....a.'] },
+  eung:   { n:'응시', ox:16, oy:17, art:['bbbb.bbbb', 'aa.....aa', '.a.....a.'] },
+  andae:  { n:'안대', ox:14, oy:17, art:[
+    '11111........',
+    '1iiii1.......',
+    '1iiii1.bbb...',
+    '.11111.aa....',
+    '....1........'] }
+};
+
+/* ── 모발색 — 수염 파츠를 리맵한다 ─────────── */
+const HAIR = {
+  black: { a:'a', b:'b' },
+  brown: { a:'c', b:'9' },
+  grey:  { a:'h', b:'d' },
+  white: { a:'d', b:'e' }
+};
+/* ── 갑주 테두리 ───────────────────────────── */
+const TRIM = {
+  gold:   { m:'j', h:'k', d:'l' },
+  silver: { m:'f', h:'g', d:'h' },
+  bronze: { m:'l', h:'j', d:'1' }
+};
+/* ── 액세서리 ──────────────────────────────── */
+const ACC = {
+  none:    null,
+  scar:    { ox:11, oy:18, art:['99....','.99...','..99..','...9..','...9..'] },
+  mole:    { ox:25, oy:26, art:['6'] },
+  earring: { ox:11, oy:25, art:['j.................j'] },
+  band:    { ox:11, oy:14, art:['yyyyyyyyyyyyyyyyyy'] }
+};
+
+/* ── 조합 ───────────────────────────────────── */
+function compose(cfg) {
+  const fac = FACTION[cfg.faction] || FACTION['촉'];
+  const remap = { F:fac[0], G:fac[1], H:fac[2] };
+  const g = faceBase(Object.assign({}, AGE_FEAT[cfg.face.age] || {}, cfg.face));
+
+  const eye = EYE[cfg.eye] || EYE.normal;
+  stamp(g, eye.art, eye.ox, eye.oy);
+  const bd = BEARD[cfg.beard] || BEARD.none;
+  stamp(g, bd.art, bd.ox, bd.oy, HAIR[cfg.hair || 'black']);
+  const acc = ACC[cfg.acc || 'none'];
+  if (acc) stamp(g, acc.art, acc.ox, acc.oy);
+  stampArmor(g, cfg.armor, remap, TRIM[cfg.trim || 'gold']);
+  const hm = HELM[cfg.helm] || HELM.none;
+  stamp(g, hm.art, hm.ox, hm.oy, remap);
+
+  if (cfg.grade === 'ung') {                     // 각성 — 깃털 3 · 금테 · 견갑 금장
+    stamp(g, ['y.y.y', 'yyyyy', '.yyy.', '..y..'], 18, 0);
+    for (let x = 0; x < W; x++) if (g[H-1][x] !== '.') g[H-1][x] = 'j';
+    for (let y = H - 12; y < H; y++)
+      for (const x of [2, 3, 4, W - 3, W - 4, W - 5])
+        if (g[y][x] !== '.' && g[y][x] !== '1') g[y][x] = (x === 3 || x === W - 4) ? 'k' : 'j';
+    for (let y = ARMOR_TOP; y < H; y++) { if (g[y][FACE_CX] !== '.') g[y][FACE_CX] = 'j'; }
+    for (const y of [ARMOR_TOP + 2, ARMOR_TOP + 3])
+      for (let x = 8; x < W - 8; x++) if (g[y] && g[y][x] !== '.' && g[y][x] !== '1') g[y][x] = 'j';
+  }
+  return g;
+}
+
+const AGE_FEAT = {
+  young: { nose:'straight', brow:'arched', mouth:'neutral' },
+  mid:   { nose:'straight', brow:'strong', mouth:'firm' },
+  old:   { nose:'hooked',   brow:'thin',   mouth:'grim' }
+};
+
+/* ── 인물 프리셋 ─────────────────────────────── */
+const F = (age, w, h, jaw, skin) => ({ age, w, h, jaw, skin });
+// FX(나이, 폭, 길이, 턱, 피부, 코, 눈썹, 입) — 간판은 이목구비까지 지정한다
+const FX = (age,w,h,jaw,skin,nose,brow,mouth) => ({ age,w,h,jaw,skin,nose,brow,mouth });
+// o 는 hair/trim/acc(최상위)와 나머지 이목구비 덮어쓰기를 함께 받는다
+const P = (id, faction, age, w, h, jaw, skin, helm, beard, armor, eye, o) => {
+  o = o || {};
+  const fo = {};
+  for (const k in o) if (k !== 'hair' && k !== 'trim' && k !== 'acc') fo[k] = o[k];
+  return { id, faction, helm, beard, armor, eye,
+    hair: o.hair || 'black', trim: o.trim || 'gold', acc: o.acc || 'none',
+    face: Object.assign({ age, w, h, jaw, skin }, AGE_FEAT[age], fo) };
+};
+const PRESETS = [
+  // ── 간판 8명 — 개별 리터치 ──────────────────
+  { star:1, id:'관우',  faction:'촉', note:'붉은 얼굴 · 두 자 길이 수염 · 봉안',
+    face:FX('mid',9,13,7,'red','straight','arched','firm'),
+    helm:'mungeon', beard:'jang', armor:'dopo', eye:'sharp', trim:'gold' },
+  { star:1, id:'장비',  faction:'촉', note:'부릅뜬 고리눈 · 뻣뻣한 범수염 · 넓은 턱',
+    face:FX('mid',11,10,1,'dark','broad','angry','grim'),
+    helm:'tugu', beard:'bbut', armor:'chalgap', eye:'glare', trim:'bronze' },
+  { star:1, id:'조운',  faction:'촉', note:'젊고 수염 없음 · 은빛 갑주 · 백마 깃털',
+    face:FX('young',8,11,8,'normal','straight','arched','neutral'),
+    helm:'bongsi', beard:'none', armor:'pangap', eye:'sharp', trim:'silver' },
+  { star:1, id:'제갈량',faction:'촉', note:'윤건 · 학창의 · 온화한 눈',
+    face:FX('mid',7,12,8,'normal','straight','thin','neutral'),
+    helm:'yungeon', beard:'paja', armor:'dopo', eye:'calm', trim:'silver' },
+  { star:1, id:'조조',  faction:'위', note:'면류관 · 짧은 수염 · 매서운 봉안',
+    face:FX('mid',9,10,4,'normal','hooked','angry','firm'),
+    helm:'myeonryu', beard:'jjalb', armor:'pangap', eye:'sharp', trim:'gold' },
+  { star:1, id:'사마의',faction:'위', note:'백발 백수염 · 응시낭고',
+    face:FX('old',9,12,5,'normal','hooked','thin','grim'),
+    helm:'mungeon', beard:'baek', armor:'dopo', eye:'eung', trim:'silver' },
+  { star:1, id:'손권',  faction:'오', note:'자염벽안 — 자줏빛 수염과 푸른 눈 (정사 기록)',
+    face:FX('young',9,11,5,'normal','straight','arched','neutral'),
+    helm:'myeonryu', beard:'jayeom', armor:'pangap', eye:'byeok', trim:'gold' },
+  { star:1, id:'여포',  faction:'군', note:'삼차관에 꿩깃 · 수염 없음 · 부릅뜬 눈',
+    face:FX('mid',10,11,4,'normal','broad','angry','firm'),
+    helm:'samcha', beard:'none', armor:'pangap', eye:'glare', trim:'gold' },
+
+  // ── 나머지 50명 — 파츠 조합 배정 ─────────────
+  // P(이름, 세력, 나이, 폭, 길이, 턱, 피부, 투구, 수염, 갑주, 눈, {hair,trim,acc,...})
+  // 촉 蜀
+  P('유비','촉','mid',9,11,6,'normal','mungeon','paja','dopo','calm',{ear:'big'}),
+  P('마초','촉','young',9,11,6,'tan','myeongap','kot','pangap','sharp',{trim:'silver',brow:'strong'}),
+  P('황충','촉','old',9,11,4,'tan','tugu','jang','chalgap','sharp',{hair:'white',trim:'bronze'}),
+  P('강유','촉','young',7,12,8,'normal','muguan','none','pangap','calm',{trim:'bronze',brow:'thin'}),
+  P('위연','촉','mid',10,11,3,'tan','muguan','samgak','chalgap','glare',{acc:'scar'}),
+  P('방통','촉','mid',11,10,3,'dark','dugeon','jjalb','dopo','normal',{acc:'mole',nose:'broad'}),
+  P('마량','촉','mid',9,11,6,'pale','dugeon','samgak','dopo','calm',{brow:'baekmi'}),
+  P('관흥','촉','young',8,13,7,'normal','bongsi','yeomso','pangap','sharp'),
+  P('왕평','촉','mid',10,10,4,'tan','tugu','kot','chalgap','normal'),
+  P('관평','촉','young',8,11,6,'normal','dugeon','none','chalgap','normal'),
+  P('장포','촉','young',10,10,2,'tan','tugu','yeomso','chalgap','glare',{brow:'angry'}),
+  P('마대','촉','mid',9,11,5,'tan','imin','paja','chalgap','normal',{hair:'brown'}),
+  P('요화','촉','old',9,11,5,'tan','muguan','jjalb','chalgap','normal',{hair:'white'}),
+  // 위 魏
+  P('장료','위','mid',9,11,5,'normal','muguan','paja','pangap','sharp'),
+  P('허저','위','mid',11,9,1,'tan','tugu','gure','pangap','glare',{trim:'bronze',mouth:'neutral'}),
+  P('서황','위','mid',9,11,4,'normal','muguan','samgak','chalgap','sharp'),
+  P('장합','위','mid',9,12,6,'normal','bongsi','jjalb','chalgap','sharp',{trim:'silver'}),
+  P('방덕','위','mid',10,11,3,'tan','myeongap','bbut','chalgap','sharp',{hair:'brown'}),
+  P('곽가','위','young',7,12,8,'pale','dugeon','none','dopo','calm',{trim:'silver'}),
+  P('순욱','위','mid',8,12,7,'pale','yungeon','samgak','dopo','calm',{trim:'silver'}),
+  P('가후','위','old',8,12,6,'pale','yungeon','samgak','dopo','eung',{hair:'grey'}),
+  P('전위','위','mid',11,10,0,'dark','sangtu','gure','pangap','glare',{trim:'bronze'}),
+  P('하후돈','위','mid',10,11,3,'dark','tugu','bbut','chalgap','andae'),
+  P('하후연','위','mid',9,11,4,'tan','muguan','kot','chalgap','sharp'),
+  P('등애','위','old',9,10,4,'tan','tugu','samgak','chalgap','normal',{hair:'grey'}),
+  P('조비','위','mid',9,11,6,'pale','myeonryu','jjalb','dopo','calm'),
+  P('조인','위','mid',10,11,4,'normal','myeongap','jjalb','pangap','normal'),
+  P('정욱','위','mid',8,13,7,'normal','mungeon','jang','dopo','normal'),
+  P('종회','위','young',8,11,7,'normal','yungeon','kot','dopo','eung'),
+  // 오 吳
+  P('손견','오','mid',10,11,3,'tan','bongsi','bbut','pangap','glare'),
+  P('손책','오','young',9,11,6,'normal','sangtu','none','pangap','sharp',{mouth:'firm'}),
+  P('주유','오','young',8,12,8,'normal','bongsi','none','dopo','calm',{trim:'silver'}),
+  P('육손','오','mid',8,11,7,'pale','yungeon','kot','dopo','calm'),
+  P('감녕','오','mid',10,11,3,'tan','imin','samgak','chalgap','glare',{hair:'brown',acc:'earring'}),
+  P('여몽','오','mid',10,11,5,'tan','muguan','jjalb','chalgap','normal'),
+  P('황개','오','old',10,11,4,'dark','jeonlip','baek','chalgap','glare',{acc:'scar'}),
+  P('노숙','오','mid',11,10,4,'normal','mungeon','paja','dopo','calm',{acc:'mole',mouth:'neutral'}),
+  P('주태','오','mid',10,10,3,'tan','dugeon','jjalb','chalgap','sharp',{acc:'scar'}),
+  P('태사자','오','mid',9,12,6,'normal','bongsi','jang','pangap','sharp'),
+  P('장소','오','old',9,13,7,'pale','mungeon','baek','dopo','calm',{trim:'silver'}),
+  P('육항','오','mid',9,11,6,'normal','muguan','jjalb','chalgap','sharp',{trim:'silver'}),
+  // 군웅 群雄
+  P('동탁','군','old',11,9,0,'tan','myeonryu','paja','yungbok','glare',{acc:'mole'}),
+  P('원소','군','mid',9,12,7,'normal','myeonryu','jang','dopo','calm'),
+  P('원술','군','mid',10,10,5,'pale','myeonryu','samgak','yungbok','glare'),
+  P('마등','군','mid',10,12,5,'dark','imin','bbut','chalgap','normal',{hair:'brown'}),
+  P('진궁','군','mid',8,12,7,'pale','dugeon','yeomso','dopo','sharp'),
+  P('화웅','군','mid',11,10,2,'dark','myeongap','bbut','yungbok','glare',{trim:'bronze'}),
+  P('공손찬','군','mid',9,11,5,'normal','bongsi','paja','pangap','sharp',{trim:'silver'}),
+  P('유표','군','old',9,12,6,'normal','myeonryu','jang','dopo','calm',{hair:'grey'}),
+  P('황건적','군','young',9,11,5,'tan','hwang','none','yungbok','normal',{trim:'bronze'})
+];
+
+
+
+  const byId = new Map(PRESETS.map(p => [p.id, p]));
+  const cache = new Map();
+  function render(id) {
+    if (cache.has(id)) return cache.get(id);
+    const cfg = byId.get(id); if (!cfg) { cache.set(id, null); return null; }
+    const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+    try { paint(cv, compose(cfg)); } catch (e) { cache.set(id, null); return null; }
+    cache.set(id, cv); return cv;
+  }
+  return { render, has: id => byId.has(id), W, H };
+})();
+const G = (name, ja, faction, tier) => ({ name, ja, faction, tier });
+const H = (name, faction, tier) => ({ name, ja: null, faction, tier, hidden: true });
+const GENERALS = [
+  // ── 장급 (2칸) · 자 보유 ──────────────────────
+  G('유비','현덕','촉','장'), G('관우','운장','촉','장'), G('장비','익덕','촉','장'),
+  G('조운','자룡','촉','장'), G('마초','맹기','촉','장'), G('황충','한승','촉','장'),
+  G('강유','백약','촉','장'), G('위연','문장','촉','장'), G('방통','사원','촉','장'),
+  G('마량','계상','촉','장'), G('관흥','안국','촉','장'), G('왕평','자균','촉','장'),
+  G('조조','맹덕','위','장'), G('장료','문원','위','장'), G('허저','중강','위','장'),
+  G('서황','공명','위','장'), G('장합','준예','위','장'), G('방덕','영명','위','장'),
+  G('곽가','봉효','위','장'), G('조비','자환','위','장'), G('조인','자효','위','장'),
+  G('정욱','중덕','위','장'), G('종회','사계','위','장'),
+  G('손권','중모','오','장'), G('주유','공근','오','장'), G('감녕','흥패','오','장'),
+  G('여몽','자명','오','장'), G('황개','공복','오','장'), G('노숙','자경','오','장'),
+  G('장소','자포','오','장'), G('육항','유절','오','장'), G('육손','백언','오','장'),
+  G('여포','봉선','군','장'), G('원소','본초','군','장'), G('마등','수성','군','장'),
+  G('동탁','중영','군','장'), G('유표','경승','군','장'),
+  // ── 교급 (2칸) · 자 미상 (정사에 전하지 않음) ──
+  G('관평',null,'촉','교'), G('장포',null,'촉','교'), G('마대',null,'촉','교'),
+  G('전위',null,'위','교'), G('화웅',null,'군','교'), G('주태','유평','오','교'),
+  // ── 명급 (3칸) · 복성 ─────────────────────────
+  G('제갈량','공명','촉','명'), G('하후돈','원양','위','명'),
+  G('사마의','중달','위','명'), G('태사자','자의','오','명'),
+  G('공손찬','백규','군','명'),
+  // ── 히든 (우연 조합) · 글자 풀에 기여하지 않음 ──
+  H('조진','위','교'), H('황조','군','교'), H('맹달','군','교'), H('진수','군','교'),
+  H('유선','촉','교'), H('황권','촉','교'), H('유장','군','교'), H('장익','촉','교'),
+  H('장의','촉','교'), H('동승','군','교'), H('허유','군','교'), H('마충','오','교'),
+  H('제갈근','오','명'), H('사마소','위','명'), H('사마사','위','명'),
+  H('하후패','위','명'), H('공손연','군','명')
+];
+const SKILL = {
+  // ── 촉 ───────────────────────────────────────
+  '조운':   { n:'칠진칠출', cd:9,  kind:'pierce', pow:1.8, span:5, desc:'경로 직선 5칸 관통' },
+  '관우':   { n:'청룡언월', cd:10, kind:'exec',   pow:4.0, cut:.25, desc:'단일 400% · 25% 이하 처형' },
+  '장비':   { n:'장판교후', cd:11, kind:'stun',   pow:1.2, rad:3, sec:1.5, desc:'주변 3칸 1.5초 기절' },
+  '유비':   { n:'인덕',     cd:0,  kind:'aura',   amt:.25, rad:3, desc:'주변 아군 공격력 +25%' },
+  '마초':   { n:'서량철기', cd:9,  kind:'knock',  pow:2.5, back:3, rad:2, desc:'경로 위 적 3칸 밀어냄' },
+  '황충':   { n:'백보천양', cd:9,  kind:'snipe',  pow:3.2, desc:'최장거리 적 저격' },
+  '강유':   { n:'구벌중원', cd:0,  kind:'grow',   step:.08, cap:.72, desc:'웨이브마다 공격력 +8% 누적' },
+  '위연':   { n:'자오곡',   cd:10, kind:'strike', pow:3.5, desc:'최후방 적에게 순간이동 타격' },
+  '방통':   { n:'연환계',   cd:12, kind:'stun',   pow:.8, rad:3, sec:2.2, desc:'적 3기를 묶어 정지' },
+  '제갈량': { n:'팔진도',   cd:13, kind:'rewind', sec:3, rad:3, desc:'3×3 적을 역방향으로' },
+  '마대':   { n:'서량추격', cd:10, kind:'knock',  pow:2.0, back:2, rad:2, desc:'밀어내며 타격' },
+  '왕평':   { n:'무당비군', cd:0,  kind:'aura',   amt:.15, rad:2, desc:'주변 아군 공격력 +15%' },
+  '관흥':   { n:'부친의검', cd:10, kind:'exec',   pow:3.0, cut:.18, desc:'단일 300% · 18% 이하 처형' },
+  '관평':   { n:'호위',     cd:0,  kind:'aura',   amt:.12, rad:2, desc:'주변 아군 공격력 +12%' },
+  '장포':   { n:'부친의모', cd:11, kind:'stun',   pow:1.0, rad:2, sec:1.2, desc:'주변 2칸 기절' },
+  '요화':   { n:'선봉',     cd:10, kind:'multi',  pow:1.6, hit:2, desc:'2기 동시 타격' },
+  '마량':   { n:'백미',     cd:0,  kind:'hero',   amt:9,  desc:'모집 시 장수 글자 +9%' },
+  // ── 위 ───────────────────────────────────────
+  '조조':   { n:'난세간웅', cd:0,  kind:'gold',   amt:1, desc:'적 처치 시 군량 +1' },
+  '장료':   { n:'소요진',   cd:10, kind:'dash',   pow:2.0, need:5, desc:'적 5기 이상이면 경로 전체 타격' },
+  '허저':   { n:'호치',     cd:9,  kind:'spin',   pow:3.0, rad:2, desc:'인접 적을 몰아친다' },
+  '전위':   { n:'쌍철극',   cd:8,  kind:'multi',  pow:2.0, hit:2, desc:'근접 2칸 동시 타격' },
+  '서황':   { n:'장구영채', cd:0,  kind:'aura',   amt:.20, rad:2, desc:'인접 아군 공격력 +20%' },
+  '장합':   { n:'교변',     cd:9,  kind:'multi',  pow:1.8, hit:3, desc:'3기 동시 타격' },
+  '방덕':   { n:'대관재전', cd:10, kind:'exec',   pow:3.2, cut:.20, desc:'단일 320% · 20% 이하 처형' },
+  '곽가':   { n:'십승십패', cd:0,  kind:'aura',   amt:.18, rad:4, desc:'넓은 범위 공격력 +18%' },
+  '순욱':   { n:'왕좌지재', cd:0,  kind:'hero',   amt:10, desc:'모집 시 장수 글자 +10%' },
+  '가후':   { n:'독사',     cd:0,  kind:'debuff', amt:.30, desc:'전 적 받는 피해 +30%' },
+  '하후돈': { n:'발시담정', cd:0,  kind:'grow',   step:.10, cap:.90, desc:'웨이브마다 공격력 +10% 누적' },
+  '하후연': { n:'신보',     cd:8,  kind:'strike', pow:2.8, desc:'가장 앞선 적에게 순간이동 타격' },
+  '사마의': { n:'응시낭고', cd:10, kind:'elite',  pow:2.2, bonus:.6, desc:'정예·보스에게 피해 +60%' },
+  '조인':   { n:'철벽',     cd:0,  kind:'aura',   amt:.16, rad:3, desc:'주변 아군 공격력 +16%' },
+  '조비':   { n:'구품관인', cd:0,  kind:'gold',   amt:1, desc:'적 처치 시 군량 +1' },
+  '등애':   { n:'음평기습', cd:11, kind:'strike', pow:3.0, desc:'최후방 적 기습' },
+  '정욱':   { n:'십면매복', cd:11, kind:'slow',   pow:.6, rad:3, sec:4, desc:'주변 3칸 적 둔화 4초 + 타격' },
+  '종회':   { n:'모반',     cd:11, kind:'gamble', pow:3.0, desc:'50% 피해 2배 · 50% 빗나감' },
+  // ── 오 ───────────────────────────────────────
+  '주유':   { n:'적벽화공', cd:12, kind:'burn',   pow:.9, sec:4, rad:2, desc:'범위 화염 4초' },
+  '육손':   { n:'이릉화계', cd:13, kind:'burn',   pow:1.0, sec:5, rad:2, desc:'경로 화계 5초' },
+  '감녕':   { n:'백기겁영', cd:6,  kind:'multi',  pow:1.2, hit:4, desc:'4기 연타' },
+  '여몽':   { n:'백의도강', cd:9,  kind:'exec',   pow:3.4, cut:.15, desc:'기습 340% · 15% 이하 처형' },
+  '태사자': { n:'신의',     cd:10, kind:'snipe',  pow:3.6, desc:'전장 절반 사거리 저격' },
+  '황개':   { n:'고육계',   cd:14, kind:'spin',   pow:5.0, rad:3, desc:'광역 500%' },
+  '손책':   { n:'소패왕',   cd:12, kind:'dash',   pow:2.2, need:1, desc:'경로 끝까지 돌진 타격' },
+  '손견':   { n:'강동맹호', cd:9,  kind:'knock',  pow:2.2, back:2, rad:2, desc:'밀어내며 타격' },
+  '손권':   { n:'제위',     cd:0,  kind:'aura',   amt:.20, rad:4, desc:'넓은 범위 공격력 +20%' },
+  '노숙':   { n:'탑상책',   cd:0,  kind:'harvest',amt:8, desc:'웨이브 종료 시 군량 +8' },
+  '주태':   { n:'만신창이', cd:0,  kind:'grow',   step:.07, cap:.63, desc:'웨이브마다 공격력 +7% 누적' },
+  '육항':   { n:'서릉수비', cd:0,  kind:'aura',   amt:.14, rad:3, desc:'주변 아군 공격력 +14%' },
+  '장소':   { n:'강동중신', cd:0,  kind:'harvest',amt:6, desc:'웨이브 종료 시 군량 +6' },
+  // ── 군웅 ─────────────────────────────────────
+  '여포':   { n:'방천화극', cd:8,  kind:'spin',   pow:4.5, rad:3, desc:'주변 3칸 회전 450%' },
+  '동탁':   { n:'폭정',     cd:0,  kind:'aura',   amt:.40, rad:2, desc:'주변 아군 공격력 +40%' },
+  '원소':   { n:'사세삼공', cd:0,  kind:'harvest',amt:10, desc:'웨이브 종료 시 군량 +10' },
+  '원술':   { n:'참칭',     cd:10, kind:'gamble', pow:2.6, desc:'50% 피해 2배 · 50% 빗나감' },
+  '마등':   { n:'서량기병', cd:0,  kind:'aura',   amt:.22, rad:3, desc:'주변 아군 공격력 +22%' },
+  '진궁':   { n:'지모',     cd:12, kind:'weak',   pow:.5, rad:3, sec:5, desc:'주변 3칸 적 약화 5초 — 받는 피해 +40%' },
+  '화웅':   { n:'관문지장', cd:9,  kind:'multi',  pow:1.9, hit:2, desc:'2기 동시 타격' },
+  '공손찬': { n:'백마의종', cd:11, kind:'dash',   pow:1.8, need:2, desc:'적 2기 이상이면 경로 돌격' },
+  '유표':   { n:'형주목',   cd:0,  kind:'harvest',amt:7, desc:'웨이브 종료 시 군량 +7' },
+  '황건적': { n:'창천이사', cd:10, kind:'spin',   pow:2.4, rad:2, desc:'주변 2칸 회전' }
+};
+const SKILL_DEFAULT = { n:'강타', desc:'단일 강타' };
+const QUOTE = {
+  '조운':'일곱 번 들어가 일곱 번 나온다!', '관우':'목을 내놓아라.', '장비':'장비가 여기 있다!', '유비':'백성이 먼저다.',
+  '마초':'서량의 말발굽을 받아라!', '황충':'백 보 밖도 내 사거리다.', '강유':'중원은 아직 멀지 않다.', '위연':'자오곡으로 돌아간다.',
+  '방통':'묶어 두면 불태우기 쉽지.', '제갈량':'팔진을 펼친다.', '마대':'놓치지 않는다.', '왕평':'무당의 기치를 세워라.',
+  '관흥':'아버지의 검이다.', '관평':'아버지 곁은 내가 지킨다.', '장포':'익덕의 아들이다!', '요화':'선봉은 내가 선다.', '마량':'흰 눈썹이 본다.',
+  '조조':'천하를 내 손에.', '장료':'장료가 왔다!', '허저':'호치를 막을 자 없다!', '전위':'주공은 내가 지킨다!', '서황':'영채를 굳혀라.',
+  '장합':'변화를 읽어라.', '방덕':'관을 지고 왔다.', '곽가':'열 가지 이유로 이긴다.', '순욱':'왕좌를 보좌한다.', '가후':'독은 조용히 퍼진다.',
+  '하후돈':'눈알을 삼켜도 싸운다!', '하후연':'사흘에 오백 리.', '사마의':'기다림도 병법이다.', '조인':'이 벽은 무너지지 않는다.', '조비':'품계를 정하라.',
+  '등애':'음평의 길을 넘는다.', '정욱':'열 겹으로 묻는다.', '종회':'천하는 아직 정해지지 않았다.',
+  '주유':'동남풍이 분다!', '육손':'불이 이릉을 삼킨다.', '감녕':'백 기면 족하다!', '여몽':'흰옷 아래 칼이 있다.', '태사자':'약속은 지킨다.',
+  '황개':'이 몸이 미끼다.', '손책':'소패왕이 간다!', '손견':'강동의 범이다!', '손권':'제위는 내 것이다.', '노숙':'탑 위에서 세었다.',
+  '주태':'상처는 훈장이다.', '육항':'서릉은 넘지 못한다.', '장소':'강동의 중신이 말한다.',
+  '여포':'방천화극 앞에 서라!', '동탁':'폭정이 곧 법이다.', '원소':'사세삼공의 이름으로.', '원술':'짐이 황제다!', '마등':'서량이 달린다!',
+  '진궁':'계책은 이미 섰다.', '화웅':'관문은 내가 지킨다.', '공손찬':'백마의종, 돌격!', '유표':'형주는 조용해야 한다.', '황건적':'창천은 죽었다!'
+};
+const POOL = GENERALS.filter(g => !g.hidden);
+const FAC = { '촉': '촉한', '위': '조위', '오': '동오', '군': '군웅' };
+const $ = id => document.getElementById(id);
+const jo = (w, a, b) => { const c = w.charCodeAt(w.length - 1) - 0xAC00; return w + (c >= 0 && c <= 11171 && c % 28 ? a : b); };
+function hash(s) { let h = 2166136261; for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619) >>> 0; } return h >>> 0; }
+function pick(name) {
+  const syl = [...name].filter(c => /[가-힣]/.test(c));
+  const hit = POOL.filter(g => [...g.name].some(c => syl.includes(c)));
+  const list = hit.length ? hit : POOL, g = list[hash(name) % list.length];
+  return { g, syl, same: [...g.name].filter(c => syl.includes(c)) };
+}
+function show(name) {
+  name = (name || '').trim().slice(0, 6); if (!/[가-힣]/.test(name)) return;
+  const { g, syl, same } = pick(name), sk = SKILL[g.name] || SKILL_DEFAULT;
+  $('who').textContent = name + ' 님은';
+  $('row').innerHTML = syl.map(c => '<div class="t' + (same.includes(c) ? ' hit' : '') + '">' + c + '</div>').join('') + '<div class="arrow">→</div>' + [...g.name].map(c => '<div class="t' + (same.includes(c) ? ' hit' : '') + '">' + c + '</div>').join('');
+  const cv = $('pc'), x = cv.getContext('2d'); x.clearRect(0, 0, 40, 48); const p = PORTRAITS.render(g.name); if (p) x.drawImage(p, 0, 0);
+  $('gn').textContent = g.name; $('gj').textContent = (g.ja ? '자 ' + g.ja + ' · ' : '') + (FAC[g.faction] || '');
+  $('sk').innerHTML = '「' + sk.n + '」<span>' + (sk.desc || '') + '</span>';
+  $('gq').textContent = QUOTE[g.name] ? '“' + QUOTE[g.name] + '”' : '';
+  const how = '게임에서는 「' + [...g.name].join('」 옆에 「') + '」' + (/[가-힣]/.test(g.name.slice(-1)) ? jo(g.name.slice(-1), '을', '를').slice(1) : '를') + ' 붙이면 ' + jo(g.name, '이', '가') + ' 섭니다.';
+  $('why').textContent = same.length ? '이름의 「' + same.join('」「') + '」 자가 ' + g.name + '의 이름 글자입니다. ' + how
+    : '이름 글자와 겹치는 장수는 없지만, 이름의 기운이 ' + jo(g.name, '을', '를') + ' 불렀습니다. ' + how;
+  $('card').hidden = false;
+  show.cur = { name, g };
+  history.replaceState(null, '', '?n=' + encodeURIComponent(name));
+}
+function link() { return location.origin + location.pathname + '?n=' + encodeURIComponent(show.cur.name); }
+function toast(t) { const e = $('toast'); e.textContent = t; e.classList.add('on'); setTimeout(() => e.classList.remove('on'), 1600); }
+$('f').onsubmit = e => { e.preventDefault(); show($('n').value); $('card').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+$('share').onclick = async () => {
+  const c = show.cur; if (!c) return;
+  const text = '내 이름 「' + c.name + '」은 삼국지 장수 ' + c.g.name + '! 너는 어떤 장수? — 한글 삼국지 디펜스';
+  try { if (navigator.share) { await navigator.share({ title: '내 이름은 어떤 장수?', text, url: link() }); return; } } catch (e) { return; }
+  try { await navigator.clipboard.writeText(text + ' ' + link()); toast('공유할 글을 복사했습니다'); } catch (e) {}
+};
+$('copy').onclick = async () => { try { await navigator.clipboard.writeText(link()); toast('링크를 복사했습니다'); } catch (e) { toast('주소창의 링크를 복사해 주세요'); } };
+{ const q = new URLSearchParams(location.search).get('n'); if (q) { $('n').value = q; show(q); } }
+</script>
+</body>
+</html>

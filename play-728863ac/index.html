@@ -2,9 +2,26 @@
 <html lang="ko">
 <head>
 <meta name="robots" content="noindex,nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="삼국지 디펜스">
+<meta name="theme-color" content="#15120d">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+  #wpFs { position: fixed; top: calc(env(safe-area-inset-top) + 8px); right: 8px; z-index: 99999; width: 34px; height: 34px; border: 0; border-radius: 8px;
+    background: rgba(13,11,8,.55); color: #f0e6c8; font-size: 18px; line-height: 34px; cursor: pointer; opacity: .55; }
+  #wpFs:hover { opacity: 1; }
+  #wpTip { position: fixed; left: 12px; right: 12px; bottom: calc(env(safe-area-inset-bottom) + 12px); z-index: 99999; padding: 12px 40px 12px 14px; border-radius: 10px;
+    background: rgba(13,11,8,.92); color: #f0e6c8; font: 14px/1.5 sans-serif; box-shadow: 0 6px 20px rgba(0,0,0,.5); }
+  #wpTip b { color: #ffd34a; }
+  #wpTip button { position: absolute; top: 6px; right: 8px; border: 0; background: none; color: #f0e6c8; font-size: 20px; cursor: pointer; }
+  .wp-hide { display: none !important; }
+</style>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>한글 삼국지 디펜스 — 프로토타입</title>
+<title>한글 삼국지 디펜스</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Nanum+Myeongjo:wght@400;700;800&family=Silkscreen:wght@400;700&display=swap">
@@ -9648,6 +9665,28 @@ window.addEventListener('unhandledrejection', ev => console.error('promise: ' + 
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(start, start);
 else start();
 fitLayout(); setTimeout(fitLayout, 150); setTimeout(fitLayout, 800);      // 글꼴 · 세이프 에어리어가 잡힌 뒤 한 번 더
+</script>
+
+<button id="wpFs" class="wp-hide" title="전체 화면 (Esc 로 나가기)" aria-label="전체 화면">⛶</button>
+<div id="wpTip" class="wp-hide">주소창 없이 보려면 Safari 아래 <b>공유</b> 단추 → <b>홈 화면에 추가</b> → 홈 화면의 아이콘으로 여세요.<button aria-label="닫기">×</button></div>
+<script>
+(function () {
+  var standalone = window.matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches || navigator.standalone;
+  var d = document, fs = d.getElementById('wpFs'), tip = d.getElementById('wpTip');
+  var ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var canFs = !!(d.documentElement.requestFullscreen || d.documentElement.webkitRequestFullscreen) && (d.fullscreenEnabled || d.webkitFullscreenEnabled);
+  function isFs() { return !!(d.fullscreenElement || d.webkitFullscreenElement); }
+  function sync() { fs.classList.toggle('wp-hide', standalone || !canFs || isFs()); }
+  if (canFs) {
+    fs.onclick = function () { var e = d.documentElement; (e.requestFullscreen || e.webkitRequestFullscreen).call(e); };
+    d.addEventListener('fullscreenchange', sync); d.addEventListener('webkitfullscreenchange', sync); sync();
+  }
+  var seen = false; try { seen = localStorage.getItem('wpTipSeen') === '1'; } catch (e) {}
+  if (ios && !standalone && !canFs && !seen) {
+    tip.classList.remove('wp-hide');
+    tip.querySelector('button').onclick = function () { tip.classList.add('wp-hide'); try { localStorage.setItem('wpTipSeen', '1'); } catch (e) {} };
+  }
+})();
 </script>
 </body>
 </html>
